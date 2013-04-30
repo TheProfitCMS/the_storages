@@ -1,0 +1,5 @@
+en:
+  the_storages:
+    validation:
+      attachment_file_size: Attachment size should be 10kb..5MB
+      uniq_attachment_file_name: File name should be uniq
