@@ -1,0 +1,17 @@
+- content_for :gallery_lightbox do
+  -# lightbox gallery 0.5
+  =javascript_include_tag "/javascripts/gallery/gallery.pack.js"
+  :javascript
+    $(function(){
+      $('a.gallery').lightBox({
+        overlayBgColor: '#000',
+        overlayOpacity: 0.6,
+        imageLoading: '/javascripts/gallery/loading.gif',
+        imageBtnClose: '/javascripts/gallery/close.gif',
+        imageBtnPrev: '/javascripts/gallery/prev.gif',
+        imageBtnNext: '/javascripts/gallery/next.gif',
+        containerResizeSpeed: 350,
+        txtImage: 'Изображения: ',
+        txtOf: 'из'
+      });//$('a.gallery')
+    });//$(function())
