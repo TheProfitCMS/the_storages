@@ -2,15 +2,15 @@ module ActAsStorage
   extend ActiveSupport::Concern
 
   included do
-    has_many :uploaded_files, as: :storage
+    has_many :attached_files, as: :storage
 
-    before_update :recalculate_files_data
-    after_update  :recalculate_files_data_for_user
-    after_destroy :recalculate_files_data_for_user
+    before_update :recalculate_storage_counters
+    after_update  :recalculate_user_counters
+    after_destroy :recalculate_user_counters
   end
 
-  def recalculate_files_data
-    puts "recalculate_files_data"
+  def recalculate_storage_counters
+    # puts "recalculate_files_data"
     # sum   = 0
     # files = self.uploaded_files.active
 
@@ -19,8 +19,8 @@ module ActAsStorage
     # self.files_count = files.size
   end
 
-  def recalculate_files_data_for_user
-    puts "recalculate_files_data_for_user"
+  def recalculate_user_counters
+    # puts "recalculate_files_data_for_user"
     #   user        = self.user
     #   storages    = user.storages.active | user.recipes.active | user.pages.active | user.articles.active
     #   files_size  = 0

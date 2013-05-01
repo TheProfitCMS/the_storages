@@ -1,10 +1,7 @@
-class UploadedFile < ActiveRecord::Base
-  # include PublishedObject::InitMethod
-  # include PublishedObject::BasicStates
-  
-  # belongs_to :user
-  # belongs_to :storage, :polymorphic => true
-  # acts_as_nested_set :scope => [:user_id, :storage_id, :storage_type]
+class AttachedFile < ActiveRecord::Base  
+  belongs_to :user
+  belongs_to :storage, :polymorphic: true
+  acts_as_nested_set scope: [:user_id, :storage_id, :storage_type]
 
   has_attached_file :attachment,
                     styles: {
