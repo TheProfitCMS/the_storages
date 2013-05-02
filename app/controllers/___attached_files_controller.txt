@@ -1,12 +1,6 @@
 class AttachedFilesController < ApplicationController
-  # Login
-  before_filter :login_required
-  # Finders
-  before_filter :find_storage, :except=>[:destroy]
-  before_filter :find_uploaded_file, :only=>[:destroy]
-  # Role system
-  before_filter :role_require
-  before_filter :owner_and_role_require, :only=>[:destroy]  
+  before_filter :find_storage,       except: [:destroy]
+  before_filter :find_uploaded_file, only:   [:destroy]
 
   # restricted area
 
@@ -56,28 +50,28 @@ class AttachedFilesController < ApplicationController
   protected
 
   def find_storage
-    storage_id =    params.delete :storage_id
-    storage_class = params.delete :storage_type
+    # storage_id =    params.delete :storage_id
+    # storage_class = params.delete :storage_type
   
-    # 'Recipe'.pluralize.downcase => recipes
-    storages = storage_class.pluralize.downcase
+    # # 'Recipe'.pluralize.downcase => recipes
+    # storages = storage_class.pluralize.downcase
     
-    # @user.recipes.where(:id=>1)
-    @storage = @user.send(storages).where(:id=>storage_id.to_i).first
-    @storage = @user.send(storages).where(:zip=>storage_id).first           unless @storage
-    @storage = @user.send(storages).where(:friendly_url=>storage_id).first  unless @storage
+    # # @user.recipes.where(:id=>1)
+    # @storage = @user.send(storages).where(:id=>storage_id.to_i).first
+    # @storage = @user.send(storages).where(:zip=>storage_id).first           unless @storage
+    # @storage = @user.send(storages).where(:friendly_url=>storage_id).first  unless @storage
 
-    unless @storage
-      flash[:error] = t('uploaded_files.storage_not_found')
-      redirect_to root_url(:subdomain=>@user.subdomain) and return
-    end    
+    # unless @storage
+    #   flash[:error] = t('uploaded_files.storage_not_found')
+    #   redirect_to root_url(:subdomain=>@user.subdomain) and return
+    # end    
   end
 
   def find_uploaded_file
-    @uploaded_file  = @user.uploaded_files.find_by_zip(params[:id])
-    access_denied and return unless @uploaded_file
-    @audited_object = @uploaded_file
-    @object_for_role_system = @uploaded_file
+    # @uploaded_file  = @user.uploaded_files.find_by_zip(params[:id])
+    # access_denied and return unless @uploaded_file
+    # @audited_object = @uploaded_file
+    # @object_for_role_system = @uploaded_file
   end
 
 end
