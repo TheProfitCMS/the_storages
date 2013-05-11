@@ -2,7 +2,7 @@ module HasAttachedFiles
   extend ActiveSupport::Concern
 
   included do
-    has_many :all_attached_files, class: :AttachedFile, foreign_key: :user_id
+    has_many :all_attached_files, class_name: :AttachedFile, foreign_key: :user_id
   end
 
   def recalculate_all_attached_files

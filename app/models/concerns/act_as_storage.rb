@@ -4,9 +4,9 @@ module ActAsStorage
   included do
     has_many :attached_files, as: :storage
 
-    before_update :recalculate_storage_counters
-    after_update  :recalculate_user_counters
-    after_destroy :recalculate_user_counters
+    # before_update :recalculate_storage_counters
+    # after_update  :recalculate_user_counters
+    # after_destroy :recalculate_user_counters
   end
 
   def recalculate_storage_counters

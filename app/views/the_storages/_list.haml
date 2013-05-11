@@ -1,41 +1,27 @@
-- uploaded_files = storage.uploaded_files.reversed_nested_set.active.all.paginate(:page=>params[:page], :per_page=>25)
+- attaches = storage.attached_files
 
-- unless uploaded_files.blank? 
-  = will_paginate uploaded_files
-   
-  %ul.uploaded_files_list
-    - uploaded_files.each do |uploaded_file|
-      %li
-        .form.overblock
-          .upload_file_header
-            .icon
-              - img = uploaded_file.is_image? ? |
-                image_tag(uploaded_file.file.url(:small), :alt=>uploaded_file.file_file_name) : |
-                file_type_icon(uploaded_file) |
-              = link_to img, uploaded_file.full_filepath, :title=>uploaded_file.title, :class=>(uploaded_file.is_image? ? :gallery : nil )
-            .title
-              = link_to uploaded_file.file_file_name, uploaded_file.full_filepath, :title=>uploaded_file.title
-            .file_size
-              = sprintf("%.3f", (uploaded_file.file.size.to_f/1.megabyte.to_f))
-              = t('shared.megabytes')
-          %p
-            %label{:name=>:url}= t('shared.url_address')
-            %input{:value=>uploaded_file.full_filepath, :class=>:input}
+- attaches.each do |attach|
+  %p
+    - if attach.is_image?
+      - if attach.processing == 'finished'
+        = link_to attach.styled_url(:original) do
+          = image_tag attach.styled_url(:preview)
+        \|
+        = link_to "rotate <", rotate_left_url(attach), method: :patch
+        \|
+        = link_to "rotate >", rotate_right_url(attach), method: :patch
+        \|
+      - else
+        Image Under Processing
+    - else
+      %span{ class: "file_type #{attach.file_extension}" }
 
-          = link_to t('uploaded_files.delete'), uploaded_file_url(uploaded_file, :subdomain=>@user.subdomain), :method=>:delete, :class=>'button delete', :confirm=>t('uploaded_files.delete_confirm')
+    = attach.attachment_file_name
+    = link_to attach.url, attach.url
+    = attach.mb_size
 
-          - id = object_id(uploaded_file, 'other_codes_link')
-          - fn = "show_other_codes('#{object_id(uploaded_file)}')"
-          = link_to_function t('uploaded_files.other_codes'), fn, :class=>:button, :id=>id
-
-          %div{:id=>object_id(uploaded_file, 'other_codes'), :style=>'display:none;'}
-            %p
-              %label{:name=>:textile_link}= t('uploaded_files.textile_link')
-              %input{:value=>uploaded_file.to_textile_link, :class=>:input}
-            %p
-              %label{:name=>:center_textile_link}= t('uploaded_files.center_code')
-              %input{:value=>'p=. '+uploaded_file.to_textile_link, :class=>:input}
-            - fn = "hide_other_codes('#{object_id(uploaded_file)}')"
-            = link_to_function t('uploaded_files.hide_other_codes'), fn, :class=>:button
-
-    = will_paginate uploaded_files
+-# if attach.is_image?
+  %div{ style: "margin: 10px" }
+    = image_tag attach.url, class: :crop_image
+  :javascript
+    $(function(){ $('.crop_image').Jcrop() })
