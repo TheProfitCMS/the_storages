@@ -2,7 +2,7 @@ module ActAsStorage
   extend ActiveSupport::Concern
 
   included do
-    has_many :attached_files, as: :storage
+    has_many :attached_files,  as: :storage
 
     # before_update :recalculate_storage_counters
     # after_update  :recalculate_user_counters

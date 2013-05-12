@@ -1,0 +1,28 @@
+- attached_images = storage.try(:attached_files).try(:images)
+
+.field
+  = label_tag :Main_Preview
+  
+  - if attached_images.blank?
+    %p To define Preview you should attache Image files to this publication
+  - else
+    - image = attached_images.first
+    %p
+      = image.title
+      \|
+      = image.mb_size
+    %div
+      = image_tag image.styled_url(:original), id: :main_preview_crop
+    %div
+      %span#x
+      %span#y
+      %span#x2
+      %span#y2
+      %span#w
+      %span#h
+      %span#img_w
+      %span#image_id= image.to_param
+      
+    %h4= link_to 'crop!', '#', id: 'crop_image_on_server'
+
+    #crop_result

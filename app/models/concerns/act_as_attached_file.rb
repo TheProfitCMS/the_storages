@@ -2,11 +2,19 @@ module ActAsAttachedFile
   extend ActiveSupport::Concern
 
   included do
+    IMAGE_EXTS = %w[jpg jpeg pjpeg png gif bmp]
+    IMAGE_CONTENT_TYPES = IMAGE_EXTS.map{ |e| "image/#{e}" }
+
     belongs_to :user
     belongs_to :storage, polymorphic: true
     acts_as_nested_set scope: [:user_id, :storage_id, :storage_type]
-
+    
     before_validation :generate_file_name, on: :create
+    # after_create   :recalculate_storage_counters
+    # after_update   :recalculate_storage_counters
+    # before_destroy :recalculate_storage_counters
+
+    scope :images, ->{ where(attachment_content_type: IMAGE_CONTENT_TYPES)  }
 
     # IMAGE PROCESSING HOOKS
     def set_processing_flag; self.processing = :processing; end
@@ -29,7 +37,29 @@ module ActAsAttachedFile
       }
   end
 
-  # ACCELERATORS
+  # HELPERS
+  def title
+    attachment_file_name
+  end
+
+  def file_name
+    File.basename attachment_file_name.downcase, file_extension
+  end
+
+  def file_extension
+    ext = File.extname(attachment_file_name).downcase
+    ext.slice!(0)
+    @extension ||= ext
+  end
+
+  def content_type
+    attachment_content_type
+  end
+
+  def mb_size
+    sprintf("%.3f", attachment_file_size.to_f/1.megabyte.to_f) + " MB"
+  end
+
   def path style = nil
     attachment.path(style)
   end
@@ -39,48 +69,39 @@ module ActAsAttachedFile
   end
 
   # FILE STYLE HELPERS (for image files processing)
-  def styled_file_name str, style
+  def styled_file_name str, style, nocache = false
     style = style.nil? ? '' : "_#{style}"
     name  = attachment_file_name.split('.')
     ext   = name.pop
-    str.gsub attachment_file_name, "#{name.join('.')}#{style}.#{ext}"
+    fn = str.gsub attachment_file_name, "#{name.join('.')}#{style}.#{ext}"
+    return fn unless nocache
+    fn + (rand*1000000).to_i.to_s
   end
 
-  def styled_path style = nil
-    styled_file_name(attachment.path, style)
+  def styled_path style = nil, nocache = false
+    styled_file_name(attachment.path, style, nocache)
   end
 
-  def styled_url style = nil
-    styled_file_name(attachment.url, style)
-  end
-
-  # HELPERS
-  def file_extension
-    ext = File.extname(attachment_file_name).downcase
-    ext.slice!(0)
-    @extension ||= ext
-  end
-
-  def content_type
-    attachment.content_type
-  end
-
-  def mb_size
-    sprintf("%.3f", attachment.size.to_f/1.megabyte.to_f) + " MB"
+  def styled_url style = nil, nocache = false
+    styled_file_name(attachment.url, style, nocache)
   end
 
   # BASE HELPERS
-  def file_name
-    File.basename attachment_file_name.downcase, file_extension
-  end
-
   def is_image?
-    %w[jpg jpeg pjpeg png gif bmp].include? file_extension
+    IMAGE_EXTS.include? file_extension
   end
 
   def generate_file_name
     fname = Russian::translit(file_name).gsub('_','-').parameterize
     self.attachment.instance_write :file_name, "#{fname}.#{file_extension}"
+  end
+
+  def landscape? image
+    image[:width] > image[:height]
+  end
+
+  def portrait? image
+    image[:width] < image[:height]
   end
 
   # CALLBACKS
@@ -92,6 +113,33 @@ module ActAsAttachedFile
   def delayed_image_processing
     job = DelayedImageProcessor.new(self)
     Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
+  end
+
+  def build_base_images
+    # file path
+    src      = path
+    original = styled_path(:original)
+    preview  = styled_path(:preview)
+
+    # original
+    image = MiniMagick::Image.open src
+    image.auto_orient
+    landscape?(image) ? image.resize('800x') : image.resize('x800') if image[:width] > 800
+    image.strip
+    image.write original
+
+    # preview
+    image = MiniMagick::Image.open original
+    image.resize "100x100!"
+    image.write preview
+
+    # delete source
+    image = MiniMagick::Image.open original
+    image.write src
+
+    # set process state
+    src_size = File.size?(src)
+    update(processing: :finished, attachment_file_size: src_size)
   end
 
   # IMAGE ROTATION
@@ -119,12 +167,25 @@ module ActAsAttachedFile
   def rotate_right
     image_rotate "90"
   end
-end
 
-# alias_method :need_thumb?, :is_image?
-# after_create   :recalculate_storage_counters
-# after_update   :recalculate_storage_counters
-# before_destroy :recalculate_storage_counters
-# before_save    { @is_new_record = id.nil?; p("===========================>>>>>", @is_new_record) }
-# before_save    :processing_state_for_images
-# after_commit   :build_image_variants, if: -> { p("====0000000000000000000========>>>>>", @is_new_record); @is_new_record }
+  # IMAGE CROP
+  def crop_image name = :cropped_image, x_shift = 0, y_shift = 0, w = 100, h = 100, img_w = nil
+    src      = path
+    original = styled_path :original
+    cropped  = styled_path name
+
+    image = MiniMagick::Image.open original
+    
+    img_w ||= image[:width]
+    scale   = image[:width].to_f/img_w.to_f
+
+    w = (w.to_f * scale).to_i
+    h = (h.to_f * scale).to_i
+
+    x_shift = (x_shift.to_f * scale).to_i
+    y_shift = (y_shift.to_f * scale).to_i
+
+    image.crop "#{w}x#{h}+#{x_shift}+#{y_shift}"
+    image.write cropped
+  end
+end
