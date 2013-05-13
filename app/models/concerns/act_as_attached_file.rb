@@ -24,7 +24,7 @@ module ActAsAttachedFile
 
     has_attached_file :attachment,
                       default_url: "/uploads/default/:style/missing.jpg",
-                      url:         "/uploads/storages/:storage_type/:storage_id/:filename"
+                      url:         "/uploads/storages/:storage_type/:storage_id/:style-:filename"
 
     validates_attachment_size :attachment,
       in: 10.bytes..5.megabytes,
@@ -64,27 +64,31 @@ module ActAsAttachedFile
     attachment.path(style)
   end
 
-  def url style = nil
-    attachment.url(style).split('?').first
+  def url style = nil, opts = {}
+    url = attachment.url(style, opts)
+    return url unless opts[:nocache]
+    rnd = (rand*1000000).to_i.to_s
+    url =~ /\?/ ? (url + rnd) : (url + '?' + rnd)
   end
 
   # FILE STYLE HELPERS (for image files processing)
-  def styled_file_name str, style, nocache = false
-    style = style.nil? ? '' : "_#{style}"
-    name  = attachment_file_name.split('.')
-    ext   = name.pop
-    fn = str.gsub attachment_file_name, "#{name.join('.')}#{style}.#{ext}"
-    return fn unless nocache
-    fn + (rand*1000000).to_i.to_s
-  end
+  # def styled_file_name style, nocache = false
+    # str, 
+    # style = style.nil? ? '' : "_#{style}"
+    # name  = attachment_file_name.split('.')
+    # ext   = name.pop
+    # fn = str.gsub attachment_file_name, "#{name.join('.')}#{style}.#{ext}"
+    # return fn unless nocache
+    # fn + (rand*1000000).to_i.to_s
+  # end
 
-  def styled_path style = nil, nocache = false
-    styled_file_name(attachment.path, style, nocache)
-  end
+  # def path style = nil, nocache = false
+  #   styled_file_name(attachment.path, style, nocache)
+  # end
 
-  def styled_url style = nil, nocache = false
-    styled_file_name(attachment.url, style, nocache)
-  end
+  # def styled_url style = nil, nocache = false
+  #   styled_file_name(attachment.url, style, nocache)
+  # end
 
   # BASE HELPERS
   def is_image?
@@ -118,8 +122,8 @@ module ActAsAttachedFile
   def build_base_images
     # file path
     src      = path
-    original = styled_path(:original)
-    preview  = styled_path(:preview)
+    original = path :main
+    preview  = path :preview
 
     # original
     image = MiniMagick::Image.open src
@@ -145,17 +149,17 @@ module ActAsAttachedFile
   # IMAGE ROTATION
   def image_rotate angle
     src      = path
-    original = styled_path(:original)
-    preview  = styled_path(:preview)
+    main     = path :main
+    preview  = path :preview
 
-    # original
+    # main
     image = MiniMagick::Image.open src
     image.rotate angle
     image.write src
-    image.write original
+    image.write main
 
     # preview
-    image = MiniMagick::Image.open original
+    image = MiniMagick::Image.open main
     image.resize "100x100!"
     image.write preview
   end
@@ -171,10 +175,10 @@ module ActAsAttachedFile
   # IMAGE CROP
   def crop_image name = :cropped_image, x_shift = 0, y_shift = 0, w = 100, h = 100, img_w = nil
     src      = path
-    original = styled_path :original
-    cropped  = styled_path name
+    main     = path :main
+    cropped  = path name
 
-    image = MiniMagick::Image.open original
+    image = MiniMagick::Image.open main
     
     img_w ||= image[:width]
     scale   = image[:width].to_f/img_w.to_f

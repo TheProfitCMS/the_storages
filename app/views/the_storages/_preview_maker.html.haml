@@ -6,13 +6,13 @@
   - if attached_images.blank?
     %p To define Preview you should attache Image files to this publication
   - else
-    - image = attached_images.first
+    - image = attached_images.last
     %p
       = image.title
       \|
       = image.mb_size
     %div
-      = image_tag image.styled_url(:original), id: :main_preview_crop
+      = image_tag image.url(:main), id: :main_preview_crop
     %div
       %span#x
       %span#y

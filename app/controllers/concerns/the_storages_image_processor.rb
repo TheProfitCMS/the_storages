@@ -15,6 +15,6 @@ module TheStoragesImageProcessor
     x = params
     attached_file = AttachedFile.where(id: x[:image_id]).first
     attached_file.crop_image(:main_preview, x[:x], x[:y], x[:w], x[:h], x[:img_w])
-    render text: attached_file.styled_url(:main_preview, true)
+    render text: attached_file.url(:main_preview, nocache: true)
   end
 end

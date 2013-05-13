@@ -4,8 +4,8 @@
   %p
     - if attach.is_image?
       - if attach.processing == 'finished'
-        = link_to attach.styled_url(:original) do
-          = image_tag attach.styled_url(:preview)
+        = link_to attach.url(:main) do
+          = image_tag attach.url(:preview)
         \|
         = link_to "rotate <", rotate_left_url(attach), method: :patch
         \|
