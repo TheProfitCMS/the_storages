@@ -128,25 +128,27 @@ module ActAsAttachedFile
     image.write preview
   end
 
-  def build_base_images
-    # file path
-    src      = path
-    main = path :main
-    preview  = path :preview
+  def build_main_image
+    src     = path
+    main    = path :main
 
-    # main
     image = MiniMagick::Image.open src
     image.auto_orient
     landscape?(image) ? image.resize('800x') : image.resize('x800') if image[:width] > 800
     image.strip
     image.write main
+  end
+
+  def build_base_images
+    # file path
+    src  = path
+    main = path :main
+
+    # main
+    build_main_image
 
     # preview
     build_correct_preview
-
-    image = MiniMagick::Image.open main
-    image.resize "100x100!"
-    image.write preview
 
     # delete source
     image = MiniMagick::Image.open main
