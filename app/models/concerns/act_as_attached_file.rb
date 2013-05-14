@@ -71,25 +71,6 @@ module ActAsAttachedFile
     url =~ /\?/ ? (url + rnd) : (url + '?' + rnd)
   end
 
-  # FILE STYLE HELPERS (for image files processing)
-  # def styled_file_name style, nocache = false
-    # str, 
-    # style = style.nil? ? '' : "_#{style}"
-    # name  = attachment_file_name.split('.')
-    # ext   = name.pop
-    # fn = str.gsub attachment_file_name, "#{name.join('.')}#{style}.#{ext}"
-    # return fn unless nocache
-    # fn + (rand*1000000).to_i.to_s
-  # end
-
-  # def path style = nil, nocache = false
-  #   styled_file_name(attachment.path, style, nocache)
-  # end
-
-  # def styled_url style = nil, nocache = false
-  #   styled_file_name(attachment.url, style, nocache)
-  # end
-
   # BASE HELPERS
   def is_image?
     IMAGE_EXTS.include? file_extension
@@ -98,14 +79,6 @@ module ActAsAttachedFile
   def generate_file_name
     fname = Russian::translit(file_name).gsub('_','-').parameterize
     self.attachment.instance_write :file_name, "#{fname}.#{file_extension}"
-  end
-
-  def landscape? image
-    image[:width] > image[:height]
-  end
-
-  def portrait? image
-    image[:width] < image[:height]
   end
 
   # CALLBACKS
@@ -119,26 +92,64 @@ module ActAsAttachedFile
     Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
   end
 
+  # IMAGE PROCESSING
+
+  def landscape? image
+    image[:width] > image[:height]
+  end
+
+  def portrait? image
+    image[:width] < image[:height]
+  end
+
+  def build_correct_preview
+    main     = path :main
+    preview  = path :preview
+    
+    image = MiniMagick::Image.open main
+
+    min_size = image[:width]
+    shift    = { x: 0, y: 0}
+    
+    if landscape?(image)
+      min_size  = image[:height]
+      shift[:x] = (image[:width] - min_size) / 2
+    elsif portrait?(image)
+      min_size = image[:width]
+      shift[:y] = (image[:height] - min_size) / 2
+    end    
+    
+    x0 = shift[:x]
+    y0 = shift[:y]
+    w  = h = min_size
+
+    image.crop "#{w}x#{h}+#{x0}+#{y0}"
+    image.resize "100x100!"
+    image.write preview
+  end
+
   def build_base_images
     # file path
     src      = path
-    original = path :main
+    main = path :main
     preview  = path :preview
 
-    # original
+    # main
     image = MiniMagick::Image.open src
     image.auto_orient
     landscape?(image) ? image.resize('800x') : image.resize('x800') if image[:width] > 800
     image.strip
-    image.write original
+    image.write main
 
     # preview
-    image = MiniMagick::Image.open original
+    build_correct_preview
+
+    image = MiniMagick::Image.open main
     image.resize "100x100!"
     image.write preview
 
     # delete source
-    image = MiniMagick::Image.open original
+    image = MiniMagick::Image.open main
     image.write src
 
     # set process state
@@ -173,7 +184,7 @@ module ActAsAttachedFile
   end
 
   # IMAGE CROP
-  def crop_image name = :cropped_image, x_shift = 0, y_shift = 0, w = 100, h = 100, img_w = nil
+  def crop_image name = :cropped_image, x0 = 0, y0 = 0, w = 100, h = 100, img_w = nil
     src      = path
     main     = path :main
     cropped  = path name
@@ -189,7 +200,7 @@ module ActAsAttachedFile
     x_shift = (x_shift.to_f * scale).to_i
     y_shift = (y_shift.to_f * scale).to_i
 
-    image.crop "#{w}x#{h}+#{x_shift}+#{y_shift}"
+    image.crop "#{w}x#{h}+#{x0}+#{y0}"
     image.write cropped
   end
 end
