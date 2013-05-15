@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module ActAsAttachedFile
   extend ActiveSupport::Concern
 
@@ -102,6 +103,32 @@ module ActAsAttachedFile
     image[:width] < image[:height]
   end
 
+  def create_empty_png
+    dir_path  = "#{Rails.root.to_s}/tmp/images"
+    empty_png = "#{dir_path}/empty.png"
+
+    FileUtils.mkdir_p dir_path
+    Cocaine::CommandLine.new("convert", "-size 800x50 xc:transparent #{empty_png}").run
+  end
+
+  def create_watermark_text
+    create_empty_png
+
+    dir_path  = "#{Rails.root.to_s}/tmp/images"
+    empty_png = "#{dir_path}/empty.png"
+    title_png = "#{dir_path}/title.png"
+    
+    title = "Открытая кухня Анны Нечаевой"
+    fs    = "-font Times-Roman -pointsize 20"
+
+    bt       = "fill black text 0,12 'open-cook.ru #{title}'"
+    wt       = "fill white text 1,11 'open-cook.ru #{title}'"
+    put_text = "-draw \"gravity south #{bt} #{wt}\""
+
+    Cocaine::CommandLine.new("convert", "#{empty_png} #{fs} #{put_text} -trim #{title_png}").run
+  end
+
+
   def build_correct_preview
     main     = path :main
     preview  = path :preview
@@ -129,8 +156,8 @@ module ActAsAttachedFile
   end
 
   def build_main_image
-    src     = path
-    main    = path :main
+    src  = path
+    main = path :main
 
     image = MiniMagick::Image.open src
     image.auto_orient
