@@ -117,12 +117,13 @@ module ActAsAttachedFile
     dir_path  = "#{Rails.root.to_s}/tmp/images"
     empty_png = "#{dir_path}/empty.png"
     title_png = "#{dir_path}/title.png"
+    font      = "#{dir_path}/georgia_italic.ttf" # Times-Roman
     
     title = "Открытая кухня Анны Нечаевой"
-    fs    = "-font Times-Roman -pointsize 20"
+    fs    = "-font #{font} -pointsize 20"
 
-    bt       = "fill black text 0,12 'open-cook.ru #{title}'"
-    wt       = "fill white text 1,11 'open-cook.ru #{title}'"
+    bt       = "fill black text 0,12 'open-cook.ru   #{title}'"
+    wt       = "fill white text 1,11 'open-cook.ru   #{title}'"
     put_text = "-draw \"gravity south #{bt} #{wt}\""
 
     Cocaine::CommandLine.new("convert", "#{empty_png} #{fs} #{put_text} -trim #{title_png}").run
