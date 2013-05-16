@@ -108,7 +108,7 @@ module ActAsAttachedFile
     empty_png = "#{dir_path}/empty.png"
 
     FileUtils.mkdir_p dir_path
-    Cocaine::CommandLine.new("convert", "-size 800x50 xc:transparent #{empty_png}").run
+    Cocaine::CommandLine.new("convert", "-size 800x800 xc:transparent #{empty_png}").run
   end
 
   def create_watermark_text
@@ -122,11 +122,27 @@ module ActAsAttachedFile
     title = "Открытая кухня Анны Нечаевой"
     fs    = "-font #{font} -pointsize 20"
 
-    bt       = "fill black text 0,12 'open-cook.ru   #{title}'"
+    rotate   = "rotate -90"
+    bt       = "fill black #{rotate} text 0,12 'open-cook.ru   #{title}'"
     wt       = "fill white text 1,11 'open-cook.ru   #{title}'"
+    
     put_text = "-draw \"gravity south #{bt} #{wt}\""
 
+    
+
     Cocaine::CommandLine.new("convert", "#{empty_png} #{fs} #{put_text} -trim #{title_png}").run
+
+    stamp_img  = "#{dir_path}/title.png"
+    source_img = "#{dir_path}/test_img.jpg"
+    result_img = "#{dir_path}/stamped_img.jpg"
+
+    centring      = "-gravity south"
+
+    margin_left   = "+0"
+    margin_bottom = "+10"
+    shift         = "-geometry " + margin_left + margin_bottom
+  
+    Cocaine::CommandLine.new("composite", " #{centring} #{shift} #{stamp_img} #{source_img} #{result_img}").run
   end
 
 
