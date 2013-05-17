@@ -103,48 +103,63 @@ module ActAsAttachedFile
     image[:width] < image[:height]
   end
 
-  def create_empty_png
-    dir_path  = "#{Rails.root.to_s}/tmp/images"
-    empty_png = "#{dir_path}/empty.png"
-
-    FileUtils.mkdir_p dir_path
-    Cocaine::CommandLine.new("convert", "-size 800x800 xc:transparent #{empty_png}").run
+  def watermark_path
+    root_path      = Rails.root.to_s
+    watermark_path = "#{root_path}/public/uploads/watermarks"
+    FileUtils.mkdir_p watermark_path
+    watermark_path
   end
 
-  def create_watermark_text
-    create_empty_png
+  def georgia_italic
+    "#{Rails.root.to_s}/vendor/fonts/georgia_italic.ttf"
+  end
 
-    dir_path  = "#{Rails.root.to_s}/tmp/images"
-    empty_png = "#{dir_path}/empty.png"
-    title_png = "#{dir_path}/title.png"
-    font      = "#{dir_path}/georgia_italic.ttf" # Times-Roman
-    
+  def create_watermark_canvas opts
+    size      = opts[:landscape] ? '800x50' : '50x800'
+    wm_canvas = "#{watermark_path}/watermark_canvas.png"
+    Cocaine::CommandLine.new("convert", "-size #{size} xc:transparent #{wm_canvas}").run
+
+    wm_canvas
+  end
+
+  # font => Times-Roman
+  def create_watermark
+    main      = path :original
+    image     = MiniMagick::Image.open main
+    landscape = landscape?(image)
+
+    wm_canvas = create_watermark_canvas(landscape: landscape)
+  
+    watermark = "#{watermark_path}/watermark.png"
     title = "Открытая кухня Анны Нечаевой"
-    fs    = "-font #{font} -pointsize 20"
 
-    rotate   = "rotate -90"
+    # text params
+    angle   = landscape ? 0 : -90
+    rotate  = "rotate #{angle}"
+
     bt       = "fill black #{rotate} text 0,12 'open-cook.ru   #{title}'"
     wt       = "fill white text 1,11 'open-cook.ru   #{title}'"
-    
-    put_text = "-draw \"gravity south #{bt} #{wt}\""
 
-    
+    fs       = "-font #{georgia_italic} -pointsize 22"
+    put_text = "-draw \"gravity center #{bt} #{wt}\""
 
-    Cocaine::CommandLine.new("convert", "#{empty_png} #{fs} #{put_text} -trim #{title_png}").run
-
-    stamp_img  = "#{dir_path}/title.png"
-    source_img = "#{dir_path}/test_img.jpg"
-    result_img = "#{dir_path}/stamped_img.jpg"
-
-    centring      = "-gravity south"
-
-    margin_left   = "+0"
-    margin_bottom = "+10"
-    shift         = "-geometry " + margin_left + margin_bottom
-  
-    Cocaine::CommandLine.new("composite", " #{centring} #{shift} #{stamp_img} #{source_img} #{result_img}").run
+    Cocaine::CommandLine.new("convert", "#{wm_canvas} #{fs} #{put_text} -trim #{watermark}").run
+    watermark
   end
 
+  def put_watermark_on_image
+    # stamp_img  = "#{dir_path}/title.png"
+    # source_img = "#{dir_path}/test_img.jpg"
+    # result_img = "#{dir_path}/stamped_img.jpg"
+
+    # centring      = "-gravity south"
+
+    # margin_left   = "+0"
+    # margin_bottom = "+10"
+    # shift         = "-geometry " + margin_left + margin_bottom
+  
+    # Cocaine::CommandLine.new("composite", " #{centring} #{shift} #{stamp_img} #{source_img} #{result_img}").run
+  end
 
   def build_correct_preview
     main     = path :main
