@@ -148,17 +148,33 @@ module ActAsAttachedFile
   end
 
   def put_watermark_on_image
-    # stamp_img  = "#{dir_path}/title.png"
-    # source_img = "#{dir_path}/test_img.jpg"
-    # result_img = "#{dir_path}/stamped_img.jpg"
+    main        = path :original
+    watermarked = path :watermarked
+    watermark   = create_watermark
 
-    # centring      = "-gravity south"
+    # top    = north
+    # bottom = south
+    # right  = east
+    # left   = west
 
-    # margin_left   = "+0"
-    # margin_bottom = "+10"
-    # shift         = "-geometry " + margin_left + margin_bottom
+    image = MiniMagick::Image.open main
+
+    if landscape?(image)
+      position = :south
+      x_shift = "+0"
+      y_shift = "+10"
+    else
+      position = :east
+      x_shift = "+10"
+      y_shift = "+0"
+    end
+
+    stick   = "-gravity #{position}"
+    shift   = "-geometry #{x_shift}#{y_shift}"
+    opacity = "-dissolve 80%"
   
-    # Cocaine::CommandLine.new("composite", " #{centring} #{shift} #{stamp_img} #{source_img} #{result_img}").run
+    Cocaine::CommandLine.new("composite", " #{stick} #{shift} #{opacity} #{watermark} #{main} #{watermarked}").run
+    watermarked
   end
 
   def build_correct_preview
