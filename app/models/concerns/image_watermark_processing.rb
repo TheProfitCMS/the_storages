@@ -1,9 +1,5 @@
 # encoding: UTF-8
 module ImageWatermarkProcessing
-  # CONSTANTS
-  SITE_NAME = 'open-cook.ru'
-  TITLE     = 'Открытая кухня Анны Нечаевой'
-
   def watermark_dir_path
     root_path = Rails.root.to_s
     dir_path  = "#{root_path}/public/uploads/watermarks"
@@ -52,7 +48,7 @@ module ImageWatermarkProcessing
     angle    = opts[:type].to_sym == :landscape ? 0 : -90
     rotate   = "rotate #{angle}"
     
-    text     = "#{SITE_NAME}   #{TITLE}"
+    text     = TheStorages.config.watermark_text
     bt       = "fill black #{rotate} text 0,12 '#{text}'"
     wt       = "fill white text 1,11 '#{text}'"
     
@@ -129,6 +125,10 @@ module ImageWatermarkProcessing
     image.write preview
   end
 
+  def update_preview
+    build_correct_preview
+  end
+
   def build_main_image
     src  = path
     main = path :main
@@ -140,12 +140,17 @@ module ImageWatermarkProcessing
     image.write main
   end
 
+  def has_watermark?
+    TheStorages.has_watermark?
+  end
+
   def build_base_images
     # paths
     src  = path
     main = path :main
+ 
+    build_watermarks if has_watermark?
 
-    build_watermarks
     build_main_image
     build_correct_preview
 
@@ -154,7 +159,7 @@ module ImageWatermarkProcessing
     image.write src
 
     # put copyright
-    put_watermark_on_main_image
+    put_watermark_on_main_image if has_watermark?
 
     # set process state
     src_size = File.size?(src)

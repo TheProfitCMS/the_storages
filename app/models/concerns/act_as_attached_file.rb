@@ -84,8 +84,9 @@ module ActAsAttachedFile
   end
 
   def generate_file_name
-    fname = to_slug_parameter(file_name)
-    self.attachment.instance_write :file_name, "#{fname}.#{file_extension}"
+    fname     = to_slug_parameter(file_name)
+    full_name = file_extension.blank? ? fname : "#{fname}.#{file_extension}"
+    self.attachment.instance_write :file_name, full_name
   end
 
   # CALLBACKS
@@ -106,7 +107,7 @@ module ActAsAttachedFile
       self.image_processing = false
       job = DelayedImageProcessor.new(self)
 
-      # Rub Job!
+      # Run Job!
       job.perform
       # Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
     end
