@@ -2,6 +2,9 @@
 module ActAsAttachedFile
   extend ActiveSupport::Concern
 
+  # IMAGE PROCESSING
+  include ImageWatermarkProcessing
+
   included do
     IMAGE_EXTS = %w[jpg jpeg pjpeg png gif bmp]
     IMAGE_CONTENT_TYPES = IMAGE_EXTS.map{ |e| "image/#{e}" }
@@ -18,10 +21,9 @@ module ActAsAttachedFile
     scope :images, ->{ where(attachment_content_type: IMAGE_CONTENT_TYPES)  }
 
     # IMAGE PROCESSING HOOKS
-    def set_processing_flag; self.processing = :processing; end
-    before_create :set_processing_flag,      if: ->(attachment){ attachment.is_image? }
-    after_create  :delayed_image_processing, if: ->(attachment){ attachment.is_image? }
-    #~ IMAGE PROCESSING HOOKS
+    attr_accessor :image_processing
+    before_create :set_processing_flags
+    after_commit  :delayed_image_processing    
 
     has_attached_file :attachment,
                       default_url: "/uploads/default/:style/missing.jpg",
@@ -77,8 +79,12 @@ module ActAsAttachedFile
     IMAGE_EXTS.include? file_extension
   end
 
+  def to_slug_parameter str
+    I18n::transliterate(str).gsub('_','-').parameterize('-').downcase
+  end
+
   def generate_file_name
-    fname = Russian::translit(file_name).gsub('_','-').parameterize
+    fname = to_slug_parameter(file_name)
     self.attachment.instance_write :file_name, "#{fname}.#{file_extension}"
   end
 
@@ -87,14 +93,22 @@ module ActAsAttachedFile
     storage.recalculate_storage_counters
   end
 
-  # DELAYED JOB
-  def delayed_image_processing
-    job = DelayedImageProcessor.new(self)
-    job.perform
-    # Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
+  def set_processing_flags
+    if is_image?
+      self.processing       = :processing
+      self.image_processing = true
+    end
   end
 
-  # IMAGE PROCESSING
-  include ImageWatermarkProcessing
+  # DELAYED JOB
+  def delayed_image_processing
+    if is_image? && image_processing
+      self.image_processing = false
+      job = DelayedImageProcessor.new(self)
 
+      # Rub Job!
+      job.perform
+      # Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
+    end
+  end
 end
