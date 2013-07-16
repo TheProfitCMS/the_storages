@@ -129,19 +129,36 @@ module ImageWatermarkProcessing
     build_correct_preview
   end
 
+  def resize_to_larger_side image, side_size
+    if image[:width] > side_size
+      landscape?(image)             ?
+      image.resize("#{side_size}x") :
+      image.resize("x#{side_size}") 
+    end
+
+    image
+  end
+
   def build_main_image
     src  = path
     main = path :main
 
     image = MiniMagick::Image.open src
     image.auto_orient
-    landscape?(image) ? image.resize('800x') : image.resize('x800') if image[:width] > 800
+    resize_to_larger_side(image, TheStorages.config.main_larger_side)
     image.strip
     image.write main
   end
 
   def has_watermark?
     TheStorages.has_watermark?
+  end
+
+  def resize_src_image
+    src   = path
+    image = MiniMagick::Image.open src
+    image = resize_to_larger_side(image, TheStorages.config.original_larger_side)
+    image.write src
   end
 
   def build_base_images
@@ -154,9 +171,8 @@ module ImageWatermarkProcessing
     build_main_image
     build_correct_preview
 
-    # delete source
-    image = MiniMagick::Image.open main
-    image.write src
+    # resize source
+    resize_src_image
 
     # put copyright
     put_watermark_on_main_image if has_watermark?

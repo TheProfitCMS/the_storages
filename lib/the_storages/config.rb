@@ -10,11 +10,21 @@ module TheStorages
   # Configuration class
   class Configuration
     include ActiveSupport::Configurable
-    config_accessor :watermark_text, :convert_path
+
+    config_accessor :watermark_text,
+                    :convert_path,
+                    :watermark_font_path,
+                    :original_larger_side,
+                    :main_larger_side
   end
 
   configure do |config|
     config.watermark_text = 'https://github.com/the-teacher'
     config.convert_path   = '/usr/bin/convert'
+
+    config.watermark_font_path  = nil
+
+    config.original_larger_side = 1024
+    config.main_larger_side     = 800
   end
 end
