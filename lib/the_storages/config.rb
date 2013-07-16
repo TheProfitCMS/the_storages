@@ -15,7 +15,7 @@ module TheStorages
                     :convert_path,
                     :watermark_font_path,
                     :original_larger_side,
-                    :main_larger_side
+                    :base_larger_side
   end
 
   configure do |config|
@@ -25,6 +25,6 @@ module TheStorages
     config.watermark_font_path  = nil
 
     config.original_larger_side = 1024
-    config.main_larger_side     = 800
+    config.base_larger_side     = 800
   end
 end

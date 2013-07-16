@@ -1,9 +1,7 @@
 # encoding: UTF-8
 module ActAsAttachedFile
   extend ActiveSupport::Concern
-
-  # IMAGE PROCESSING
-  include ImageWatermarkProcessing
+  include StorageImageProcessing
 
   included do
     IMAGE_EXTS = %w[jpg jpeg pjpeg png gif bmp]
