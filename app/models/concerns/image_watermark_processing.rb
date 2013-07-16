@@ -208,8 +208,3 @@ module ImageWatermarkProcessing
     image.write cropped
   end
 end
-
-# # main      = path :original
-# # image     = MiniMagick::Image.open main
-# # landscape = landscape?(image)
-# # wm_canvas = create_watermark_canvas(landscape: landscape)

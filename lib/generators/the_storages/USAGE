@@ -1,5 +1,5 @@
 Description:
-  TheStorages generator will copy files for organize comment's tree in your web project
+  TheStorages generator will copy files to organize file uploads in your web project
 
 This text:
   bundle exec rails g the_storages --help
@@ -9,25 +9,6 @@ Generators:
 
   This will create:
    config/initializers/the_storages.rb
-   
-   app/models/ip_black_list.rb
-   app/models/user_agent_black_list.rb
-
-   app/controllers/comments_controller.rb
-   app/controllers/ip_black_lists_controller.rb
-   app/controllers/user_agent_black_lists_controller.rb
-
-  bundle exec rails g the_storages controllers
-
-  This will create:
-    app/controllers/comments_controller.rb
-    app/controllers/ip_black_lists_controller.rb
-    app/controllers/user_agent_black_lists_controller.rb
-
-View Generators:
-  bundle exec rails g the_storages:views assets
-  bundle exec rails g the_storages:views helper
-  bundle exec rails g the_storages:views views
 
 Migrations:
   bundle exec rake the_storages_engine:install:migrations

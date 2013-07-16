@@ -90,7 +90,8 @@ module ActAsAttachedFile
   # DELAYED JOB
   def delayed_image_processing
     job = DelayedImageProcessor.new(self)
-    Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
+    job.perform
+    # Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
   end
 
   # IMAGE PROCESSING
