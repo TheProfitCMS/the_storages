@@ -10,6 +10,7 @@ module ActAsAttachedFile
     belongs_to :user
     belongs_to :storage, polymorphic: true
     acts_as_nested_set scope: [:user_id, :storage_id, :storage_type]
+    include TheSortableTree::Scopes
     
     before_validation :generate_file_name, on: :create
     # after_create   :recalculate_storage_counters
@@ -36,6 +37,10 @@ module ActAsAttachedFile
         scope: [:user_id, :storage_type, :storage_id],
         message: I18n.translate('the_storages.validation.uniq_attachment_file_name')
       }
+  end
+
+  def content_type_class
+    content_type.parameterize('_').gsub('-', '_')
   end
 
   # HELPERS

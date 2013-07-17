@@ -1,27 +1,30 @@
-- attaches = storage.attached_files
+- attaches = storage.attached_files.nested_set
+%ol.sortable_tree.attached_files_list{ data: { max_levels: 1, rebuild_url: rebuild_attached_files_url } }
+  = sortable_tree attaches, render_module: AttachedFilesListHelper
 
-- attaches.each do |attach|
-  %p
-    - if attach.is_image?
-      - if attach.processing == 'finished'
-        = link_to attach.url(:main) do
-          = image_tag attach.url(:preview)
-        \|
-        = link_to "rotate <", rotate_left_url(attach), method: :patch
-        \|
-        = link_to "rotate >", rotate_right_url(attach), method: :patch
-        \|
+-#
+  - attaches.each do |attach|
+    %p
+      - if attach.is_image?
+        - if attach.processing == 'finished'
+          = link_to attach.url(:main) do
+            = image_tag attach.url(:preview)
+          \|
+          = link_to "rotate <", rotate_left_url(attach), method: :patch
+          \|
+          = link_to "rotate >", rotate_right_url(attach), method: :patch
+          \|
+        - else
+          Image Under Processing
       - else
-        Image Under Processing
-    - else
-      %span{ class: "file_type #{attach.file_extension}" }
+        %span{ class: "file_type #{attach.file_extension}" }
 
-    = attach.attachment_file_name
-    = link_to attach.url, attach.url
-    = attach.mb_size
+      = attach.attachment_file_name
+      = link_to attach.url, attach.url
+      = attach.mb_size
 
--# if attach.is_image?
-  %div{ style: "margin: 10px" }
-    = image_tag attach.url, class: :crop_image
-  :javascript
-    $(function(){ $('.crop_image').Jcrop() })
+  -# if attach.is_image?
+    %div{ style: "margin: 10px" }
+      = image_tag attach.url, class: :crop_image
+    :javascript
+      $(function(){ $('.crop_image').Jcrop() })

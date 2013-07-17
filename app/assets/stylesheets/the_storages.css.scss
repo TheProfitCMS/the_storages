@@ -1,0 +1,38 @@
+.attached_files_list{
+  .item{
+    overflow: hidden; zoom: 1;
+  }
+  .preview_pic{
+    float: left;
+    background: white;
+    border: 1px solid gray;
+    overflow: hidden; zoom: 1;
+    height: 90px; width: 90px;
+    /*border-radius: 45px;*/
+    a{
+      margin: 0px;
+      color: #000000;
+      display: inline;
+      font-size: 10pt;
+      font-weight: normal;
+      line-height: 100%;
+      text-decoration: none;
+    }
+
+    i{
+      display: block;
+      height: 90px; width: 90px;
+      background-color: transparent;
+      background-repeat: no-repeat;
+      background-position: center center;
+      
+      &.application_vnd_openxmlformats_officedocument_wordprocessingml_document{
+        background-image:  image-url("content_types/file_extension_doc.png");
+      }
+      /* content_type styles here */
+    }
+  }
+  h4{
+    margin-left: 135px;
+  }
+}

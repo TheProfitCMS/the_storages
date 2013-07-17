@@ -6,7 +6,7 @@ module WatermarkFu
   end
 
   def watermark_dir_path
-    dir_path  = "#{Rails.root.to_s}/public/uploads/watermarks"
+    dir_path  = TheStorages.config.watermarks_path
     FileUtils.mkdir_p dir_path
     dir_path
   end

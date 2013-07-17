@@ -1,8 +1,7 @@
-# require app level initializer if it's exists
-app_initializer = Rails.root.to_s + '/config/initializers/the_storages.rb'
-require(app_initializer) if File.exists?(app_initializer)
+require_app_level_initializer
 
-Paperclip.options[:command_path] = TheStorages.config.convert_path
+conv_path = TheStorages.config.convert_path
+Paperclip.options[:command_path] = conv_path if conv_path
 
 module Paperclip
   module Interpolations

@@ -1,7 +1,3 @@
-# require app level initializer if it's exists
-app_initializer = Rails.root.to_s + '/config/initializers/the_storages.rb'
-require(app_initializer) if File.exists?(app_initializer)
-
 # encoding: UTF-8
 module StorageImageProcessing
   include WatermarkFu
