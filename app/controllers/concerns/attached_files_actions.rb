@@ -20,7 +20,6 @@ module AttachedFilesActions
 
       redirect_to [request.referer, :files].join('#')
     end
-
     # if params[:files]
     #   attached_files        = []
     #   attached_files_errors = []
@@ -52,4 +51,10 @@ module AttachedFilesActions
     # redirect_to [request.referer, :files].join('#')
   end
 
+  def destroy
+    attachment = AttachedFile.find(params[:id])
+    attachment.destroy_processed_files
+    attachment.destroy
+    redirect_to [request.referer, :files].join('#')
+  end
 end

@@ -1,6 +1,31 @@
+$file_types: (3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt torrent jpeg hqx sit mcd rb dat pub png tgz wav bat m4v cdl mpg divx htm default dmg doc pdf dll eps ogg vcd ifo cda dwg aif cab gif wps bup m4b qxd asf jar ttf asx wma rtf dvf amr xls m4a aiff pps tif dss tmp eml log bmp cdr iso sea rar psd ai m4p mpeg wmv qbb mdb zip gz ace  mswmm flv swf ss pst lnk fla cbr xpi exe mov ptb qbw php msi rm chm thm sitx);
 .attached_files_list{
   .item{
     overflow: hidden; zoom: 1;
+  }
+  
+  h4{
+    a{ font-weight: bold; }
+  }
+
+  .rotate{
+    margin-left: 135px;
+
+    a{
+      margin: 0;      
+      display: inline-block;
+      height: 16px; width: 16px;
+      background-color: transparent;
+      background-repeat: no-repeat;
+      background-position: center center;
+
+      &.left{
+        background-image: image-url("rotate_left.png");
+      }
+      &.right{
+        background-image: image-url("rotate_right.png");
+      }
+    }
   }
   .preview_pic{
     float: left;
@@ -25,10 +50,15 @@
       background-color: transparent;
       background-repeat: no-repeat;
       background-position: center center;
-      
-      &.application_vnd_openxmlformats_officedocument_wordprocessingml_document{
-        background-image:  image-url("content_types/file_extension_doc.png");
+      background-image:  image-url("content_types/default.png");
+
+
+      @each $file_type in $file_types{
+        &.f_#{$file_type} {
+          background-image: image-url("content_types/file_extension_#{$file_type}.png");
+        }
       }
+
       /* content_type styles here */
     }
   }

@@ -39,8 +39,8 @@ module ActAsAttachedFile
       }
   end
 
-  def content_type_class
-    content_type.parameterize('_').gsub('-', '_')
+  def file_css_class
+    'f_' + file_extension
   end
 
   # HELPERS

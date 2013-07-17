@@ -21,11 +21,30 @@ module AttachedFilesListHelper
               <i class='handle'></i>
               <div class='preview_pic'>#{build_preview_pic}</div>
               #{ show_link }
+              #{ rotate_links }
+              #{ watermark_switch }
               #{ controls }
             </div>
             #{ children }
           </li>
         "
+      end
+
+      def watermark_switch
+        if @node.is_image?
+          on_off = @node.watermark ? 'OFF' : 'ON'
+          "<div class='watermark_switcher'>
+            #{on_off}
+          </div>"
+        end
+      end
+
+      def rotate_links
+        if @node.is_image?
+          left  = h.link_to '', h.rotate_left_url(@node),  method: :patch, class: :left
+          right = h.link_to '', h.rotate_right_url(@node), method: :patch, class: :right
+          "<div class='rotate'>#{left} #{right}</div>"
+        end
       end
 
       def build_preview_pic
@@ -34,7 +53,7 @@ module AttachedFilesListHelper
           url = @node.url(:base)
           "<a href='#{url}'><img src='#{src}'></a>"
         else
-          klass = @node.content_type_class
+          klass = @node.file_css_class
           url = @node.url
           "<a href='#{url}'><i class='#{klass}'></i></a>"
         end
@@ -43,9 +62,11 @@ module AttachedFilesListHelper
       def show_link
         node = options[:node]
         ns   = options[:namespace]
+        mb   = " (#{@node.mb_size})"
         title_field = options[:title]
+        title = node.send(title_field)
         url = @node.is_image? ? @node.url(:base) : @node.url
-        "<h4>#{ h.link_to(node.send(title_field), url) }</h4>"
+        "<h4>#{ h.link_to(title + mb, url)}</h4>"
       end
 
       def controls
@@ -53,8 +74,6 @@ module AttachedFilesListHelper
 
         edit_path = h.url_for(:controller => options[:klass].pluralize, :action => :edit, :id => node)
         show_path = h.url_for(:controller => options[:klass].pluralize, :action => :show, :id => node)
-
-        #{ h.link_to '', edit_path, :class => :edit }
 
         "
           <div class='controls'>

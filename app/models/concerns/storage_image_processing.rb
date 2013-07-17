@@ -59,7 +59,16 @@ module StorageImageProcessing
   def resize_src_image
     src   = path
     image = MiniMagick::Image.open src
+    image.auto_orient
     image = resize_to_larger_side(image, TheStorages.config.original_larger_side)
     image.write src
+  end
+
+  def destroy_processed_files
+    base    = path :base
+    preview = path :preview
+
+    FileUtils.rm base,    force: true 
+    FileUtils.rm preview, force: true
   end
 end
