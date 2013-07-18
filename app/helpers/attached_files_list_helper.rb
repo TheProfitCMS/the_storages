@@ -19,10 +19,14 @@ module AttachedFilesListHelper
           <li data-node-id='#{ @node.id }'>
             <div class='item'>
               <i class='handle'></i>
-              <div class='preview_pic'>#{build_preview_pic}</div>
-              #{ show_link }
               #{ rotate_links }
-              #{ watermark_switch }
+              <div class='preview_pic'>#{build_preview_pic}</div>
+              <div class='file_block'>
+                #{ show_link }
+                #{ url_input }
+                #{ show_size }
+                #{ watermark_switch }
+              </div>
               #{ controls }
             </div>
             #{ children }
@@ -30,11 +34,26 @@ module AttachedFilesListHelper
         "
       end
 
+      def current_host
+        h.request.host_with_port
+      end
+
+      def url_input
+        opts = {nocache: false, timestamp: false}
+        url = @node.is_image? ? @node.url(:base, opts) : @node.url(:original, opts)
+        "URL: <input class='file_url' value='#{current_host + url}'>"
+      end
+
+      def show_size
+        "<div>#{@node.mb_size}</div>"
+      end
+
       def watermark_switch
         if @node.is_image?
-          on_off = @node.watermark ? 'OFF' : 'ON'
+          on_off = @node.watermark ? 'rm watermark' : 'add watermark'
           "<div class='watermark_switcher'>
             #{on_off}
+            <i class='gear'></i>
           </div>"
         end
       end
@@ -62,11 +81,10 @@ module AttachedFilesListHelper
       def show_link
         node = options[:node]
         ns   = options[:namespace]
-        mb   = " (#{@node.mb_size})"
         title_field = options[:title]
         title = node.send(title_field)
         url = @node.is_image? ? @node.url(:base) : @node.url
-        "<h4>#{ h.link_to(title + mb, url)}</h4>"
+        "<h4>#{ h.link_to(title, url)}</h4>"
       end
 
       def controls
