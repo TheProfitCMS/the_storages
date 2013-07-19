@@ -18,12 +18,7 @@ module ImageManipulation
     image.rotate angle
     image.write  src
 
-    # base
-    build_base_image
-    put_watermark_on_base_image
-
-    # preview
-    build_correct_preview
+    refresh_base_image
   end
 
   def rotate_left

@@ -1,5 +1,8 @@
 $file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt torrent jpeg hqx sit mcd rb dat pub png tgz wav bat m4v cdl mpg divx htm default dmg doc pdf dll eps ogg vcd ifo cda dwg aif cab gif wps bup m4b qxd asf jar ttf asx wma rtf dvf amr xls m4a aiff pps tif dss tmp eml log bmp cdr iso sea rar psd ai m4p mpeg wmv qbb mdb zip gz ace  mswmm flv swf ss pst lnk fla cbr xpi exe mov ptb qbw php msi rm chm thm sitx);
 .attached_files_list{
+  li{
+    margin-bottom: 15px;
+  }
   .item{
     overflow: hidden; zoom: 1;
   }
@@ -17,17 +20,9 @@ $file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt 
     }
   }
 
-  .file_url{
-    border: 1px solid lightgray;
-    padding: 4px;
-    width: 90%;
-    font-size: 1.2em;
-    margin-bottom: 7px;
-  }
-
   .rotate{
     position: absolute;
-    bottom:5px; left:6px;
+    top:65px; left:6px;
     width: 16px;
     
     a{
@@ -71,7 +66,7 @@ $file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt 
       background-color: transparent;
       background-repeat: no-repeat;
       background-position: center center;
-      background-image:  image-url("content_types/default.png");
+      background-image:  image-url("content_types/default.jpg");
 
 
       @each $file_type in $file_types{
@@ -81,15 +76,41 @@ $file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt 
       }
     }
   }
+
   h4{
     margin-left: 135px;
   }
-  .watermark_switcher{
-    i{
-      width: 16px;
-      height: 16px;
-      display: inline-block;
-      background-image: image-url("gear.png");
+
+  .url_input{
+    margin-bottom:10px;
+
+    input{
+      border: 1px solid lightgray;
+      padding: 4px;
+      width: 90%;
+      font-size: 1.2em;
     }
+  }
+
+  .watermark_switcher{
+    margin-bottom:10px;
+    font-size: 1.2em;
+    color: #333;
+    .wm_off{
+      color: gray;
+      padding: 3px;
+      cursor: pointer;
+      background: lightgray;
+    }
+    .wm_on{
+      color: #00561f;
+      padding: 3px;
+      cursor: pointer;
+      background: #bdd3b2;
+    }
+  }
+
+  .fsize{
+    font-size:0.9em;
   }
 }

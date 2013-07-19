@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 # DOC:
 # We use Helper Methods for tree building,
 # because it's faster than View Templates and Partials
@@ -24,8 +26,8 @@ module AttachedFilesListHelper
               <div class='file_block'>
                 #{ show_link }
                 #{ url_input }
-                #{ show_size }
                 #{ watermark_switch }
+                #{ show_size }
               </div>
               #{ controls }
             </div>
@@ -41,20 +43,22 @@ module AttachedFilesListHelper
       def url_input
         opts = {nocache: false, timestamp: false}
         url = @node.is_image? ? @node.url(:base, opts) : @node.url(:original, opts)
-        "URL: <input class='file_url' value='#{current_host + url}'>"
+        "<div class='url_input'>URL: <input class='file_url' value='#{current_host + url}'></div>"
       end
 
       def show_size
-        "<div>#{@node.mb_size}</div>"
+        "<div class='fsize'>#{@node.mb_size}</div>"
       end
 
       def watermark_switch
         if @node.is_image?
-          on_off = @node.watermark ? 'rm watermark' : 'add watermark'
-          "<div class='watermark_switcher'>
-            #{on_off}
-            <i class='gear'></i>
-          </div>"
+          link = if @node.watermark
+            "<span class='wm_on'>Вкл.</span>"
+          else
+            "<span class='wm_off'>Выкл.</span>"
+          end
+
+          "<div class='watermark_switcher'>Водный знак: #{link}</div>"
         end
       end
 

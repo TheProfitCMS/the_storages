@@ -1,6 +1,10 @@
 module WatermarkFu
   extend ActiveSupport::Concern
 
+  def need_watermark?
+    self.watermark && has_watermark?
+  end
+
   def has_watermark?
     TheStorages.has_watermark?
   end

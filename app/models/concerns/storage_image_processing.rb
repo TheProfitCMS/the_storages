@@ -3,20 +3,24 @@ module StorageImageProcessing
   include WatermarkFu
   include ImageManipulation
 
-  def build_base_images
-    build_base_image
-    resize_src_image
-    build_correct_preview
+  def draw_watermark
+    return false unless need_watermark?
+    build_watermarks
+    put_watermark_on_base_image
+  end
 
-    # put copyright
-    if has_watermark?
-      build_watermarks
-      put_watermark_on_base_image
-    end
+  def build_base_images
+    resize_src_image
+    refresh_base_image
 
     # set process state
     src_size = File.size?(path)
     update(processing: :finished, attachment_file_size: src_size)
+  end
+
+  def create_img_dir_path path
+    _path = path.split('/')[0...-1].join('/')
+    FileUtils.mkdir_p _path
   end
 
   # IMAGE PROCESSING
@@ -42,6 +46,8 @@ module StorageImageProcessing
 
     image.crop "#{w}x#{h}+#{x0}+#{y0}"
     image.resize "100x100!"
+
+    create_img_dir_path(preview)
     image.write preview
   end
 
@@ -53,7 +59,15 @@ module StorageImageProcessing
     image.auto_orient
     resize_to_larger_side(image, TheStorages.config.base_larger_side)
     image.strip
+
+    create_img_dir_path(base)
     image.write base
+  end
+
+  def refresh_base_image
+    build_base_image
+    build_correct_preview
+    draw_watermark
   end
 
   def resize_src_image
@@ -68,6 +82,7 @@ module StorageImageProcessing
     base    = path :base
     preview = path :preview
 
+    # todo: rm empty folders
     FileUtils.rm base,    force: true 
     FileUtils.rm preview, force: true
   end

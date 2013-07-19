@@ -26,8 +26,8 @@ module ActAsAttachedFile
 
     has_attached_file :attachment,
                       default_url: ":rails_root/public/system/uploads/default/:style-missing.jpg",
-                      path:        ":rails_root/public/system/storages/:storage_type/:storage_id/:style-:filename",
-                      url:         "/system/storages/:storage_type/:storage_id/:style-:filename"
+                      path:        ":rails_root/public/system/storages/:storage_type/:storage_id/:style/:filename",
+                      url:         "/system/storages/:storage_type/:storage_id/:style/:filename"
 
 
     validates_attachment_size :attachment,
