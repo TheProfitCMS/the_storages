@@ -21,10 +21,11 @@ module AttachedFilesActions
     end
   end
 
-  def switch_watermark
+  def watermark_switch
     attachment = AttachedFile.find(params[:id])
     attachment.toggle!(:watermark)
     attachment.refresh_base_image
+    render nothing: true
   end
 
   def destroy
