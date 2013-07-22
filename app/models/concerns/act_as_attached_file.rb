@@ -84,12 +84,12 @@ module ActAsAttachedFile
     IMAGE_EXTS.include? file_extension
   end
 
-  def to_slug_parameter str
+  def to_slug_param str
     I18n::transliterate(str).gsub('_','-').parameterize('-').downcase
   end
 
   def generate_file_name
-    fname     = to_slug_parameter(file_name)
+    fname     = to_slug_param(file_name)
     full_name = file_extension.blank? ? fname : "#{fname}.#{file_extension}"
     self.attachment.instance_write :file_name, full_name
   end

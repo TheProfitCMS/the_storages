@@ -5,6 +5,14 @@ Paperclip.options[:command_path] = conv_path if conv_path
 
 module Paperclip
   module Interpolations
+    def id attachment, style
+      attachment.instance.id
+    end
+
+    def klass  attachment, style
+      attachment.instance.class.to_s.downcase
+    end
+
     def storage_id attachment, style
       attachment.instance.storage_id
     end
