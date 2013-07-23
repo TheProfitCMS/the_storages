@@ -1,3 +1,4 @@
+require 'the_string_to_slug'
 require 'the_storages/config'
 require 'the_storages/version'
 

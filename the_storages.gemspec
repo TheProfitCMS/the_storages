@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency 'paperclip'
   spec.add_dependency 'state_machine'
   spec.add_dependency 'the_sortable_tree'
+  spec.add_dependency 'the_string_to_slug', '~> 0.0.6'
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
