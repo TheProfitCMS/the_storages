@@ -42,7 +42,7 @@ module ActAsAttachedFile
   end
 
   def file_css_class
-    'f_' + file_extension
+    'f_' + TheStorages.file_ext(attachment_file_name)
   end
 
   # HELPERS
@@ -51,13 +51,7 @@ module ActAsAttachedFile
   end
 
   def file_name
-    File.basename attachment_file_name.downcase, file_extension
-  end
-
-  def file_extension
-    ext = File.extname(attachment_file_name).downcase
-    ext.slice!(0)
-    @extension ||= ext
+    TheStorages.file_name(attachment_file_name)
   end
 
   def content_type
@@ -81,17 +75,13 @@ module ActAsAttachedFile
 
   # BASE HELPERS
   def is_image?
-    IMAGE_EXTS.include? file_extension
-  end
-
-  def to_slug_param str
-    I18n::transliterate(str).gsub('_','-').parameterize('-').downcase
+    IMAGE_EXTS.include? TheStorages.file_ext(attachment_file_name)
   end
 
   def generate_file_name
-    fname     = to_slug_param(file_name)
-    full_name = file_extension.blank? ? fname : "#{fname}.#{file_extension}"
-    self.attachment.instance_write :file_name, full_name
+    file_name  = attachment.instance_read(:file_name)
+    file_name  = TheStorages.slugged_file_name(file_name)
+    attachment.instance_write :file_name, file_name
   end
 
   # CALLBACKS

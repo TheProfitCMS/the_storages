@@ -1,4 +1,4 @@
-require_app_level_initializer
+require_storages_app_level_initializer
 
 conv_path = TheStorages.config.convert_path
 Paperclip.options[:command_path] = conv_path if conv_path
