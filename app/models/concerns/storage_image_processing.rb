@@ -85,8 +85,6 @@ module StorageImageProcessing
     base    = path :base
     preview = path :preview
 
-    # todo: rm empty folders
-    FileUtils.rm base,    force: true 
-    FileUtils.rm preview, force: true
+    FileUtils.rm([base, preview], force: true)
   end
 end
