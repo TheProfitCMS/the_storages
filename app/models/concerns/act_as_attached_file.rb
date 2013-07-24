@@ -5,7 +5,7 @@ module ActAsAttachedFile
   include StorageImageProcessing
 
   included do
-    IMAGE_EXTS = %w[jpg jpeg pjpeg png gif bmp]
+    IMAGE_EXTS = %w[jpg jpeg pjpeg png x-png gif bmp]
     IMAGE_CONTENT_TYPES = IMAGE_EXTS.map{ |e| "image/#{e}" }
 
     belongs_to :user

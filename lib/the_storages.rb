@@ -19,16 +19,17 @@ module TheStorages
     file_name = File.basename(file_name)
     fname     = self.file_name(file_name)
     ext       = self.file_ext(file_name)
+    return fname if ext.blank?
     [fname, ext].join('.')
   end
 
   def self.file_name file_name
     file_name = File.basename(file_name)
     ext       = File.extname(file_name)
-    File.basename(file_name, ext).to_slug_param
+    File.basename(file_name, ext).to_s.to_slug_param
   end
 
   def self.file_ext file_name
-    File.extname(file_name)[1..-1].to_slug_param
+    File.extname(file_name)[1..-1].to_s.to_slug_param
   end
 end
