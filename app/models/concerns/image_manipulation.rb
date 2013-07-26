@@ -11,13 +11,15 @@ module ImageManipulation
   end
 
   # Fu
-  def rotate_attached_image angle
-    # rotate src
-    src   = path
-    image = MiniMagick::Image.open(src)
-    image.rotate angle
-    image.write  src
+  def rotate_image src, dest, angle
+    img = MiniMagick::Image.open(src)
+    img.rotate(angle)
+    img.write(dest)
+  end
 
+  def rotate_attached_image angle
+    src = path
+    rotate_image(src,src,angle)
     refresh_base_image
   end
 
@@ -30,7 +32,7 @@ module ImageManipulation
   end
 
   def resize_to_larger_side image, side_size
-    if image[:width] > side_size
+    if image[:width] > side_size.to_i
       landscape?(image)             ?
       image.resize("#{side_size}x") :
       image.resize("x#{side_size}")
@@ -39,24 +41,23 @@ module ImageManipulation
     image
   end
 
-  # IMAGE CROP
-  def crop_image name = :cropped_image, x0 = 0, y0 = 0, w = 100, h = 100, img_w = nil
-    src      = path
-    base     = path :base
-    cropped  = path name
+  def resize_to_larger_side! src, side_size
+    image = MiniMagick::Image.open(src)
+    image = resize_to_larger_side(image, side_size)
+    image.write src
+  end
 
-    image = MiniMagick::Image.open base
-    
-    img_w ||= image[:width]
-    scale   = image[:width].to_f/img_w.to_f
+  # IMAGE CROP
+  def crop_image src, dest, x0 = 0, y0 = 0, w = 100, h = 100, scale = 1
+    image = MiniMagick::Image.open src
+
+    x_shift = (x0.to_f * scale).to_i
+    y_shift = (y0.to_f * scale).to_i
 
     w = (w.to_f * scale).to_i
     h = (h.to_f * scale).to_i
 
-    x_shift = (x_shift.to_f * scale).to_i
-    y_shift = (y_shift.to_f * scale).to_i
-
-    image.crop "#{w}x#{h}+#{x0}+#{y0}"
-    image.write cropped
+    image.crop "#{w}x#{h}+#{x_shift}+#{y_shift}"
+    image.write dest  
   end
 end

@@ -37,7 +37,7 @@ module AttachedFilesListHelper
       end
 
       def current_host
-        h.request.host_with_port
+        h.request.protocol + h.request.host_with_port
       end
 
       def url_input
