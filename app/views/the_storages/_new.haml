@@ -1,36 +1,9 @@
 - uploaded_file = storage.uploaded_files.new
 
-:css
-  .file_notice ul{
-    margin-bottom:10px;
-    padding:5px;
-    border:1px dashed red;
-    background-color: PeachPuff;
-  }
-  .file_notice ul li{
-    font-weight:bold;
-    list-style: disc outside none;
-    margin-left: 20px;
-  }
-  #add_file_link a{
-    background-color: PowderBlue;
-    font-size: 16pt;
-    padding:5px 15px;
-    -moz-border-radius:5px;
-    border: 1px solid Blue;
-  }
-  #add_file_link{
-    margin-bottom:15px;
-  }
-
--# 
-  #add_file_link
-    =link_to_function t('uploaded_files.show_upload_new_file_form'), "$('#upload_file_form').show();$('#add_file_link').hide()"
-
 - content_for :js do
   = javascript_include_tag "jqMultiUploads"
 
-#upload_file_form.form.overblock{:style => "background: #CCFFCC"}
+#upload_file_form.form
   = form_for :uploaded_file, :url => uploaded_files_url(:subdomain=>@user.subdomain), :html => { :style => "background: #CCFFCC", :multipart => true, :method=>:post } do |f|
     = render :partial => 'uploaded_files/form', :locals => {:f => f, :uploaded_file=>uploaded_file, :button=>t('uploaded_files.create'), :storage=>storage}
 

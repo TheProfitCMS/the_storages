@@ -4,26 +4,7 @@
   = hidden_field_tag 'storage_id',   storage.to_param
   = hidden_field_tag 'storage_type', storage.class
   
-  = file_field_tag 'files[]', class: :test_multi
+  .field
+    = file_field_tag 'files[]', class: :test_multi
   
   %p= f.submit "Upload"
-
--#
-  = hidden_field_tag 'storage_type', storage.class
-  = hidden_field_tag 'storage_id', storage.to_param
-
-  %p
-    = f.label :file, t('uploaded_files.form.file')
-    = file_field_tag 'files[]', :class => :multi
-
-  .file_notice
-    %ul
-      %li= t('uploaded_files.file_size_for_uploading_notice')
-      %li= t('uploaded_files.file_foto_for_uploading_notice')
-
-  = form_buttons_for(uploaded_file)
-
-  .submit_button
-    = submit_tag button, :class => :submit
-
-  = moderation_buttons_for(uploaded_file)
