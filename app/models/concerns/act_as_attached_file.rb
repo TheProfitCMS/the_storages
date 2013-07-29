@@ -14,10 +14,8 @@ module ActAsAttachedFile
     include TheSortableTree::Scopes
     
     before_validation :generate_file_name, on: :create
-    # after_create   :recalculate_storage_counters
-    # after_update   :recalculate_storage_counters
-    # before_destroy :recalculate_storage_counters
-
+    after_create   :recalculate_storage_counters!
+    after_destroy  :recalculate_storage_counters!
     scope :images, ->{ where(attachment_content_type: IMAGE_CONTENT_TYPES)  }
   end
 
@@ -39,7 +37,7 @@ module ActAsAttachedFile
   end
 
   def mb_size
-    sprintf("%.3f", attachment_file_size.to_f/1.megabyte.to_f) + " MB"
+    FileSizeHelper.mb_size(attachment_file_size)
   end
 
   def path style = nil
@@ -65,7 +63,7 @@ module ActAsAttachedFile
   end
 
   # CALLBACKS
-  def recalculate_storage_counters
-    storage.recalculate_storage_counters
+  def recalculate_storage_counters!
+    storage.recalculate_storage_counters!
   end
 end

@@ -1,9 +1,0 @@
-- uploaded_file = storage.uploaded_files.new
-
-- content_for :js do
-  = javascript_include_tag "jqMultiUploads"
-
-#upload_file_form.form
-  = form_for :uploaded_file, :url => uploaded_files_url(:subdomain=>@user.subdomain), :html => { :style => "background: #CCFFCC", :multipart => true, :method=>:post } do |f|
-    = render :partial => 'uploaded_files/form', :locals => {:f => f, :uploaded_file=>uploaded_file, :button=>t('uploaded_files.create'), :storage=>storage}
-

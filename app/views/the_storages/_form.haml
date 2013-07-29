@@ -1,4 +1,4 @@
-%h3 Attach files
+%h3= t('.new_file')
 
 = form_for :attached_file, url: attached_files_url, html: { enctype: "multipart/form-data", method: :post } do |f|
   = hidden_field_tag 'storage_id',   storage.to_param
@@ -7,4 +7,4 @@
   .field
     = file_field_tag 'files[]', class: :test_multi
   
-  %p= f.submit "Upload"
+  %p= f.submit t('.upload')

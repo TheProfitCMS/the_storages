@@ -1,0 +1,7 @@
+ru:
+  the_storages:
+    list:
+      files_list: 'Прикрепленные файлы:'
+    form:
+      new_file: 'Прикрепить файл:'
+      upload: Загрузить файл

@@ -4,7 +4,7 @@ module AttachmentProcessing
   included do
     attr_accessor :image_processing
     before_create :set_processing_flags
-    after_commit  :delayed_image_processing
+    after_commit  :delayed_file_processing
 
     has_attached_file :attachment,
                       default_url: ":rails_root/public/system/uploads/default/:style-missing.jpg",
@@ -30,14 +30,17 @@ module AttachmentProcessing
   end
 
   # DELAYED JOB
-  def delayed_image_processing
+  def delayed_file_processing
     if is_image? && image_processing
       self.image_processing = false
       job = DelayedImageProcessor.new(self)
 
-      # Run Job!
       job.perform
       # Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
+    else
+      # if it's not image
+      # Upload file and recalculate
+      recalculate_storage_counters!
     end
   end
 end
