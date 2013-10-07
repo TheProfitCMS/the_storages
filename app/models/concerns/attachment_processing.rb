@@ -34,7 +34,6 @@ module AttachmentProcessing
     if is_image? && image_processing
       self.image_processing = false
       job = DelayedImageProcessor.new(self)
-
       job.perform
       # Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
     else
