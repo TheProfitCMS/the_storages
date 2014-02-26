@@ -1,69 +1,73 @@
 $file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt torrent jpeg hqx sit mcd rb dat pub png tgz wav bat m4v cdl mpg divx htm default dmg doc pdf dll eps ogg vcd ifo cda dwg aif cab gif wps bup m4b qxd asf jar ttf asx wma rtf dvf amr xls m4a aiff pps tif dss tmp eml log bmp cdr iso sea rar psd ai m4p mpeg wmv qbb mdb zip gz ace  mswmm flv swf ss pst lnk fla cbr xpi exe mov ptb qbw php msi rm chm thm sitx);
 
 .attached_files_list{
-  li{
-    margin-bottom: 15px;
-  }
+  li{ margin-bottom: 15px; }
   .item{
+    background: none;
     overflow: hidden; zoom: 1;
-  }
-  
-  .file_block{
-    margin: 0 35px 0 130px;
 
-    h4{
-      margin-left: 0;
-      margin-bottom: 5px;
-      a{
-        margin: 0;
-        font-weight: bold;
-      }
+    &:hover{ background: #F5F5F5; }
+  }
+
+  .handle{ margin: 5px 5px 50px; }
+  .left_controls{ width: 26px; }
+
+  .right_controls{
+    width: 36px;
+
+    .controls, .controls a {
+      right: 0; top: 0;
+      margin: 0; padding: 0;
+      position: relative;
+      float: none;
     }
   }
 
+  .main_block *{
+    right: 0; top: 0;
+    margin: 0; padding: 0;
+    position: relative;
+    float: none;
+  }
+
+  .main_block{
+    a{ display: inline; }
+    p{ margin: 0 0 10px; }
+    input{ padding: 6px 12px; }
+  }
+
   .rotate{
-    position: absolute;
-    top:65px; left:6px;
+    margin: 5px;
     width: 16px;
     
     a{
-      margin: 0;      
+      margin: 0;
+      margin-bottom: 10px;
+
       display: inline-block;
       height: 16px; width: 16px;
+
       background-color: transparent;
       background-repeat: no-repeat;
       background-position: center center;
 
-      &.left{
-        background-image: image-url("rotate_left.png");
-      }
-      &.right{
-        background-image: image-url("rotate_right.png");
-      }
+      &.left{  background-image: image-url("rotate_left.png");  }
+      &.right{ background-image: image-url("rotate_right.png"); }
     }
   }
 
   .preview_pic{
-    float: left;
-    background: white;
-    border: 1px solid gray;
-    overflow: hidden; zoom: 1;
-    height: 90px; width: 90px;
-    position: relative;
-    /*border-radius: 45px;*/
-    a{
-      margin: 0px;
-      color: #000000;
-      display: inline;
-      font-size: 10pt;
-      font-weight: normal;
-      line-height: 100%;
-      text-decoration: none;
-    }
+    width: 100px;
+
+    a{ margin: 0; padding: 0; }
 
     i{
       display: block;
       height: 90px; width: 90px;
+      
+      border-radius: 3px;
+      border: 1px solid gray;
+
       background-color: transparent;
       background-repeat: no-repeat;
       background-position: center center;
@@ -76,42 +80,5 @@ $file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt 
         }
       }
     }
-  }
-
-  h4{
-    margin-left: 135px;
-  }
-
-  .url_input{
-    margin-bottom:10px;
-
-    input{
-      border: 1px solid lightgray;
-      padding: 4px;
-      width: 90%;
-      font-size: 1.2em;
-    }
-  }
-
-  .watermark_switcher{
-    margin-bottom:10px;
-    font-size: 1.2em;
-    color: #333;
-    .wm_off{
-      color: gray;
-      padding: 3px;
-      cursor: pointer;
-      background: lightgray;
-    }
-    .wm_on{
-      color: #00561f;
-      padding: 3px;
-      cursor: pointer;
-      background: #bdd3b2;
-    }
-  }
-
-  .fsize{
-    font-size:0.9em;
   }
 }

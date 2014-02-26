@@ -18,19 +18,33 @@ module AttachedFilesListHelper
         @node = options[:node]
 
         "
-          <li data-node-id='#{ @node.id }'>
+          <li data-node-id='#{ @node.id }' id='attached_file_#{ @node.id }' >
             <div class='item'>
-              <i class='handle'></i>
-              #{ rotate_links }
-              <div class='preview_pic'>#{build_preview_pic}</div>
-              <div class='file_block'>
-                #{ show_link }
-                #{ url_input }
-                #{ watermark_switch }
-                #{ show_size }
-              </div>
-              #{ controls }
+              <table class='table table-bordered'>
+                <tr>
+                  <td class='left_controls warning'>
+                    <i class='handle'></i>
+                    #{ rotate_links }
+                  </td>
+
+                  <td class='preview_pic'>
+                    #{ build_preview_pic }
+                  </td>
+
+                  <td class='main_block'>                  
+                    #{ show_link }
+                    #{ url_input }
+                    #{ watermark_switch }
+                    #{ show_size }
+                  </td>
+
+                  <td class='right_controls danger'>
+                    #{ controls }    
+                  </td>
+                </tr>
+              </table>
             </div>
+
             #{ children }
           </li>
         "
@@ -43,22 +57,25 @@ module AttachedFilesListHelper
       def url_input
         opts = {nocache: false, timestamp: false}
         url = @node.is_image? ? @node.url(:base, opts) : @node.url(:original, opts)
-        "<div class='url_input'>URL: <input class='file_url' value='#{current_host + url}'></div>"
+        "<p>
+          <label>URL</label>
+          <input class='form-control' type='text' value='#{ current_host + url }'>
+        </p>"
       end
 
       def show_size
-        "<div class='fsize'>#{@node.mb_size}</div>"
+        "<p>#{@node.mb_size}</p>"
       end
 
       def watermark_switch
         if @node.is_image?
           link = if @node.watermark
-            "<span class='wm_on'>Вкл.</span>"
+            h.link_to "Отключить", h.watermark_switch_attached_file_path(@node), method: :patch
           else
-            "<span class='wm_off'>Выкл.</span>"
+            h.link_to "Включить", h.watermark_switch_attached_file_path(@node), method: :patch
           end
 
-          "<div class='watermark_switcher'>Водный знак: #{link}</div>"
+          "<p>Водный знак: #{ link }</p>"
         end
       end
 
@@ -74,11 +91,11 @@ module AttachedFilesListHelper
         if @node.is_image?
           src = @node.url(:preview)
           url = @node.url(:base)
-          "<a href='#{url}'><img src='#{src}'></a>"
+          "<a href='#{url}'><img src='#{ src }'></a>"
         else
           klass = @node.file_css_class
           url = @node.url
-          "<a href='#{url}'><i class='#{klass}'></i></a>"
+          "<a href='#{url}'><i class='#{ klass }'></i></a>"
         end
       end
 
@@ -88,7 +105,7 @@ module AttachedFilesListHelper
         title_field = options[:title]
         title = node.send(title_field)
         url = @node.is_image? ? @node.url(:base) : @node.url
-        "<h4>#{ h.link_to(title, url)}</h4>"
+        "<p>#{ h.link_to(title, url)}</p>"
       end
 
       def controls

@@ -25,7 +25,11 @@ module AttachedFilesActions
     attachment = AttachedFile.find(params[:id])
     attachment.toggle!(:watermark)
     attachment.refresh_base_image
-    render nothing: true
+
+    respond_to do |format|
+      format.html  { redirect_to [ request.referer, "attached_file_#{ params[:id] }" ].join('#') }
+      format.json  { render json: { status: :ok }  }
+    end
   end
 
   def destroy
