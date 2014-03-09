@@ -8,16 +8,15 @@ module ActAsAttachedFile
   IMAGE_CONTENT_TYPES = IMAGE_EXTS.map{ |e| "image/#{e}" }
 
   included do
-    # PAPPERCLIP
     has_attached_file :attachment ,
-                      default_url: ":rails_root/public/system/uploads/default/:style-missing.jpg",
-                      path:        ":rails_root/public/system/storages/:storage_type/:storage_id/:style/:filename",
-                      url:         "/system/storages/:storage_type/:storage_id/:style/:filename"
+                      default_url: TheStorages.config.default_url,
+                      path:        TheStorages.config.attachment_path,
+                      url:         TheStorages.config.attachment_url
 
-    validates_attachment_content_type :attachment, :content_type => /\A\w|\S|\s\Z/
+    validates_attachment_content_type :attachment, :content_type => /.*/
 
     validates_attachment_size :attachment,
-      in: 10.bytes..5.megabytes,
+      in: TheStorages.config.file_min_size..TheStorages.config.file_max_size,
       message: I18n.translate('the_storages.validation.attachment_file_size')
 
     validates :attachment_file_name,
@@ -25,19 +24,21 @@ module ActAsAttachedFile
         scope: [:user_id, :storage_type, :storage_id],
         message: I18n.translate('the_storages.validation.uniq_attachment_file_name')
       }
-    # ~ PAPPERCLIP
 
     belongs_to :user
     belongs_to :storage, polymorphic: true
+    
     acts_as_nested_set scope: [:user_id, :storage_id, :storage_type]
     include TheSortableTree::Scopes
 
     attr_accessor :image_processing
-    before_create :set_processing_flags
-    after_commit  :delayed_file_processing
+
+    before_create     :set_processing_flags
+    after_commit      :delayed_file_processing
     before_validation :generate_file_name, on: :create
-    after_create   :recalculate_storage_counters!
-    after_destroy  :recalculate_storage_counters!
+    after_create      :recalculate_storage_counters!
+    after_destroy     :recalculate_storage_counters!
+    
     scope :images, ->{ where(attachment_content_type: IMAGE_CONTENT_TYPES)  }
   end
 
