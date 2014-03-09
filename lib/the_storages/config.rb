@@ -32,7 +32,7 @@ module TheStorages
     config.watermarks_path     = "#{ Rails.root.to_s }/public/uploads/watermarks"
 
     config.file_min_size = 10.bytes
-    config.file_max_size = 5.megabytes
+    config.file_max_size = 30.megabytes
 
     config.default_url     = ":rails_root/public/uploads/attachments_default/:style-missing.jpg"
     config.attachment_path = ":rails_root/public/uploads/storages/:storage_type/:storage_id/:style/:filename"
