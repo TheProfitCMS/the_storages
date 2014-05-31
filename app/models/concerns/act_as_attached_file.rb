@@ -13,8 +13,6 @@ module ActAsAttachedFile
                       path:        TheStorages.config.attachment_path,
                       url:         TheStorages.config.attachment_url
 
-    validates_attachment_content_type :attachment, :content_type => /.*/
-
     validates_attachment_size :attachment,
       in: TheStorages.config.file_min_size..TheStorages.config.file_max_size,
       message: I18n.translate('the_storages.validation.attachment_file_size')
@@ -25,9 +23,12 @@ module ActAsAttachedFile
         message: I18n.translate('the_storages.validation.uniq_attachment_file_name')
       }
 
+    # this validation should be turn off by hook in initializers
+    validates_attachment_content_type :attachment, content_type: /.*/
+
     belongs_to :user
     belongs_to :storage, polymorphic: true
-    
+
     acts_as_nested_set scope: [:user_id, :storage_id, :storage_type]
     include TheSortableTree::Scopes
 
@@ -38,7 +39,7 @@ module ActAsAttachedFile
     before_validation :generate_file_name, on: :create
     after_create      :recalculate_storage_counters!
     after_destroy     :recalculate_storage_counters!
-    
+
     scope :images, ->{ where(attachment_content_type: IMAGE_CONTENT_TYPES)  }
   end
 

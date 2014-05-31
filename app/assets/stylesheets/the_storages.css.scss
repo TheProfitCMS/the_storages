@@ -1,4 +1,4 @@
-$file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt torrent jpeg hqx sit mcd rb dat pub png tgz wav bat m4v cdl mpg divx htm default dmg doc pdf dll eps ogg vcd ifo cda dwg aif cab gif wps bup m4b qxd asf jar ttf asx wma rtf dvf amr xls m4a aiff pps tif dss tmp eml log bmp cdr iso sea rar psd ai m4p mpeg wmv qbb mdb zip gz ace  mswmm flv swf ss pst lnk fla cbr xpi exe mov ptb qbw php msi rm chm thm sitx);
+$file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt torrent jpeg hqx sit mcd rb dat pub png tgz wav bat m4v cdl mpg divx htm dmg doc pdf dll eps ogg vcd ifo cda dwg aif cab gif wps bup m4b qxd asf jar ttf asx wma rtf dvf amr xls m4a aiff pps tif dss tmp eml log bmp cdr iso sea rar psd ai m4p mpeg wmv qbb mdb zip gz ace  mswmm flv swf ss pst lnk fla cbr xpi exe mov ptb qbw php msi rm chm thm sitx);
 
 .attached_files_list{
   li{ margin-bottom: 15px; }
@@ -39,7 +39,7 @@ $file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt 
   .rotate{
     margin: 5px;
     width: 16px;
-    
+
     a{
       margin: 0;
       margin-bottom: 10px;
@@ -64,7 +64,7 @@ $file_types: (docx 3gp 7z jpg bin ps rmvb vob ses indd mp2 mp4 ram mid html txt 
     i{
       display: block;
       height: 90px; width: 90px;
-      
+
       border-radius: 3px;
       border: 1px solid gray;
 
