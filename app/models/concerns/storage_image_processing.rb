@@ -1,7 +1,6 @@
 # encoding: UTF-8
 module StorageImageProcessing
   include WatermarkFu
-  include ImageManipulation
 
   def draw_watermark
     return false unless need_watermark?
@@ -38,15 +37,15 @@ module StorageImageProcessing
 
     min_size = image[:width]
     shift    = { x: 0, y: 0}
-    
+
     if landscape?(image)
       min_size  = image[:height]
       shift[:x] = (image[:width] - min_size) / 2
     elsif portrait?(image)
       min_size  = image[:width]
       shift[:y] = (image[:height] - min_size) / 2
-    end    
-    
+    end
+
     x0 = shift[:x]
     y0 = shift[:y]
     w  = h = min_size
