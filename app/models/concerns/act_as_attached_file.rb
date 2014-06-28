@@ -1,8 +1,6 @@
 # encoding: UTF-8
 module ActAsAttachedFile
   extend ActiveSupport::Concern
-  include AttachmentProcessing
-  include StorageImageProcessing
 
   IMAGE_EXTS = %w[jpg jpeg pjpeg png x-png gif bmp]
   IMAGE_CONTENT_TYPES = IMAGE_EXTS.map{ |e| "image/#{e}" }
@@ -90,4 +88,29 @@ module ActAsAttachedFile
   def recalculate_storage_counters!
     storage.recalculate_storage_counters!
   end
+
+  def set_processing_flags
+    if is_image?
+      self.processing       = :processing
+      self.image_processing = true
+    end
+  end
+
+  # Queue
+  def delayed_file_processing
+    if is_image? && image_processing
+      self.image_processing = false
+
+      # Build image varians and recalculate
+      build_base_images
+      recalculate_storage_counters!
+    else
+      # Upload file and recalculate
+      recalculate_storage_counters!
+    end
+  end
+
+  # job = DelayedImageProcessor.new(self)
+  # job.perform
+  # Delayed::Job.enqueue job, queue: :image_processing, run_at: Proc.new { 10.seconds.from_now }
 end

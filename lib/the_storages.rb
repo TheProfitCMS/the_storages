@@ -2,6 +2,7 @@ require 'the_string_to_slug'
 require 'the_storages/config'
 require 'the_storages/version'
 
+# TODO
 # require app level initializer if it's exists
 def require_storages_app_level_initializer
   app_initializer = Rails.root.to_s + '/config/initializers/the_storages.rb'
@@ -11,9 +12,10 @@ end
 module TheStorages
   class Engine < Rails::Engine; end
 
-  def self.has_watermark?
-    !self.config.watermark_text.blank?
-  end
+  # TODO
+  # def self.has_watermark?
+  #   !self.config.watermark_text.blank?
+  # end
 
   def self.slugged_file_name file_name
     file_name = File.basename(file_name)

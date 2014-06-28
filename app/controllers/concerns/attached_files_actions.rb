@@ -7,7 +7,7 @@ module AttachedFilesActions
       params[:files].each do |file|
         attached_file = @storage.attached_files.new
         attached_file.attachment = file
-        
+
         saved = attached_file.save
 
         attached_files_msg.push        attached_file.attachment_file_name  if  saved
@@ -18,17 +18,6 @@ module AttachedFilesActions
       flash[:error]  = attached_files_errors_msg.join(', ')
 
       redirect_to [request.referer, :files].join('#')
-    end
-  end
-
-  def watermark_switch
-    attachment = AttachedFile.find(params[:id])
-    attachment.toggle!(:watermark)
-    attachment.refresh_base_image
-
-    respond_to do |format|
-      format.html  { redirect_to [ request.referer, "attached_file_#{ params[:id] }" ].join('#') }
-      format.json  { render json: { status: :ok }  }
     end
   end
 

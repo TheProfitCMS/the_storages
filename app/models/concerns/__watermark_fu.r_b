@@ -1,6 +1,23 @@
 module WatermarkFu
   extend ActiveSupport::Concern
 
+  # def draw_watermark
+  #   return false unless need_watermark?
+  #   build_watermarks
+  #   put_watermark_on_base_image
+  # end
+
+  # def watermark_switch
+  #   attachment = AttachedFile.find(params[:id])
+  #   attachment.toggle!(:watermark)
+  #   attachment.refresh_base_image
+
+  #   respond_to do |format|
+  #     format.html  { redirect_to [ request.referer, "attached_file_#{ params[:id] }" ].join('#') }
+  #     format.json  { render json: { status: :ok }  }
+  #   end
+  # end
+
   def need_watermark?
     self.watermark && has_watermark?
   end
@@ -36,20 +53,20 @@ module WatermarkFu
     Cocaine::CommandLine.new("convert", "-size #{size} xc:transparent #{wm_canvas}").run
     true
   end
-  
+
   def create_watermark opts = {}
     opts[:type] ||=  :landscape
     watermark     =  watermark_path(opts[:type])
     return false  if File.exists? watermark
-    
+
     # text params
     angle    = opts[:type].to_sym == :landscape ? 0 : -90
     rotate   = "rotate #{angle}"
-    
+
     text     = TheStorages.config.watermark_text
     bt       = "fill black #{rotate} text 0,12 '#{text}'"
     wt       = "fill white text 1,11 '#{text}'"
-    
+
     fs       = "-font #{watermark_font} -pointsize 22"
     put_text = "-draw \"gravity center #{bt} #{wt}\""
 
@@ -79,7 +96,7 @@ module WatermarkFu
     position  = :south
     x_shift   = "+0"
     y_shift   = "+10"
-    
+
     if portrait?(image)
       watermark =  watermark_path(:portrait)
       position  = :east
