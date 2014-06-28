@@ -9,7 +9,7 @@
 # or use h.html_escape(node.content)
 # for escape potentially dangerous content
 module AttachedFilesListHelper
-  module Render 
+  module Render
     class << self
       attr_accessor :h, :options
 
@@ -24,14 +24,14 @@ module AttachedFilesListHelper
                 <tr>
                   <td class='left_controls warning'>
                     <i class='handle'></i>
-                    #{ rotate_links }
+
                   </td>
 
                   <td class='preview_pic'>
                     #{ build_preview_pic }
                   </td>
 
-                  <td class='main_block'>                  
+                  <td class='main_block'>
                     #{ show_link }
                     #{ url_input }
                     #{ watermark_switch }
@@ -39,7 +39,7 @@ module AttachedFilesListHelper
                   </td>
 
                   <td class='right_controls danger'>
-                    #{ controls }    
+                    #{ controls }
                   </td>
                 </tr>
               </table>
@@ -79,13 +79,13 @@ module AttachedFilesListHelper
         end
       end
 
-      def rotate_links
-        if @node.is_image?
-          left  = h.link_to '', h.rotate_left_url(@node),  method: :patch, class: :left
-          right = h.link_to '', h.rotate_right_url(@node), method: :patch, class: :right
-          "<div class='rotate'>#{left} #{right}</div>"
-        end
-      end
+      # def rotate_links
+      #   if @node.is_image?
+      #     left  = h.link_to '', h.rotate_left_url(@node),  method: :patch, class: :left
+      #     right = h.link_to '', h.rotate_right_url(@node), method: :patch, class: :right
+      #     "<div class='rotate'>#{left} #{right}</div>"
+      #   end
+      # end
 
       def build_preview_pic
         if @node.is_image?

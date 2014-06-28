@@ -19,6 +19,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # spec.add_dependency 'paperclip'
+
+  spec.add_dependency 'the_image'
   spec.add_dependency 'state_machine'
   spec.add_dependency 'the_sortable_tree'
   spec.add_dependency 'the_string_to_slug', '~> 1.2'
