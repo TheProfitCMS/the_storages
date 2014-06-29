@@ -17,14 +17,6 @@ module TheStorages
   #   !self.config.watermark_text.blank?
   # end
 
-  def self.slugged_file_name file_name
-    file_name = File.basename(file_name)
-    fname     = self.file_name(file_name)
-    ext       = self.file_ext(file_name)
-    return fname if ext.blank?
-    [fname, ext].join('.')
-  end
-
   def self.file_name file_name
     file_name = File.basename(file_name)
     ext       = File.extname(file_name)

@@ -34,7 +34,6 @@ module AttachedFilesListHelper
                   <td class='main_block'>
                     #{ show_link }
                     #{ url_input }
-                    #{ watermark_switch }
                     #{ show_size }
                   </td>
 
@@ -67,17 +66,17 @@ module AttachedFilesListHelper
         "<p>#{@node.mb_size}</p>"
       end
 
-      def watermark_switch
-        if @node.is_image?
-          link = if @node.watermark
-            h.link_to "Отключить", h.watermark_switch_attached_file_path(@node), method: :patch
-          else
-            h.link_to "Включить", h.watermark_switch_attached_file_path(@node), method: :patch
-          end
+      # def watermark_switch
+      #   if @node.is_image?
+      #     link = if @node.watermark
+      #       h.link_to "Отключить", h.watermark_switch_attached_file_path(@node), method: :patch
+      #     else
+      #       h.link_to "Включить", h.watermark_switch_attached_file_path(@node), method: :patch
+      #     end
 
-          "<p>Водный знак: #{ link }</p>"
-        end
-      end
+      #     "<p>Водный знак: #{ link }</p>"
+      #   end
+      # end
 
       # def rotate_links
       #   if @node.is_image?
