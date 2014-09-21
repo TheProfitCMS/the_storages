@@ -12,6 +12,12 @@ module TheStorages
       @new_file = @storage.attached_files.new(attachment: params[:file])
 
       if @new_file.save
+        if @new_file.is_image?
+          @new_file.create_image_original
+          @new_file.create_image_base
+          @new_file.create_image_preview
+        end
+
         render 'the_storages/create.success'
       else
         render 'the_storages/create.errors'

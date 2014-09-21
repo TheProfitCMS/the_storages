@@ -73,7 +73,7 @@ module TheStorages
       if is_image? && image_processing
         self.image_processing = false
 
-        create_image_versions
+        # create_image_versions
         recalculate_storage_counters
       else
         recalculate_storage_counters
@@ -88,7 +88,7 @@ module TheStorages
 
     # CALLBACKS
 
-    def create_image_versions
+    def create_version_original
       src = path
 
       manipulate({ src: src, dest: src }) do |image, opts|
@@ -96,9 +96,6 @@ module TheStorages
         image = strip image
         image
       end
-
-      create_version_base
-      create_version_preview
     end
 
     def create_version_base
