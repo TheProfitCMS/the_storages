@@ -11,14 +11,19 @@ module TheStorages
   class Configuration
     include ActiveSupport::Configurable
 
-    config_accessor :watermark_text,
-                    :convert_path,
+    config_accessor :convert_path,
+
+                    :watermark_text,
+                    :watermark_flag,
+                    :watermarks_path,
                     :watermark_font_path,
+
                     :original_larger_side,
                     :base_larger_side,
-                    :watermarks_path,
+
                     :file_min_size,
                     :file_max_size,
+
                     :default_url,
                     :attachment_path,
                     :attachment_url
@@ -27,6 +32,7 @@ module TheStorages
   configure do |config|
     config.convert_path = '/usr/bin/convert'
 
+    config.watermark_flag      = true
     config.watermark_font_path = nil
     config.watermark_text      = 'https://github.com/the-teacher'
     config.watermarks_path     = "#{ Rails.root.to_s }/public/uploads/watermarks"
