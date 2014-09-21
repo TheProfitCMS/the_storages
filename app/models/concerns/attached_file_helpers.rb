@@ -21,6 +21,14 @@ module TheStorages
         TheStorages.file_name(attachment_file_name)
       end
 
+      def file_ext
+        TheStorages.file_ext(attachment_file_name)
+      end
+
+      def is_jpg?
+        %[ jpg jpeg ].include? file_ext
+      end
+
       def content_type
         attachment_content_type
       end
