@@ -13,9 +13,9 @@ module TheStorages
 
       if @new_file.save
         if @new_file.is_image?
-          @new_file.create_image_original
-          @new_file.create_image_base
-          @new_file.create_image_preview
+          @new_file.create_version_original
+          @new_file.create_version_base
+          @new_file.create_version_preview
         end
 
         render 'the_storages/create.success'
